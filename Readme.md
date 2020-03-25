@@ -9,3 +9,5 @@ Three features an the page:
 - set GPS coordinates and render on a map and find the name of the location (when possible)
 
 - clic on the map and get the GPS coordinates and possible name
+
+Running on https://geoloc_browser.surge.sh
