@@ -1,4 +1,4 @@
-#geoloc_browser
+# geoloc_browser
 
 Javascript ES17 app to play with `navigator.geolocation` API and `Leaflet.js`
 
