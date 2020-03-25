@@ -3,18 +3,49 @@ const mapbox_token =
   "pk.eyJ1IjoibmRyZWFuIiwiYSI6ImNrMnE2d3RlZTBiMjkzZHA3enZ4dXU1cmEifQ.5DQRQQ9H6Gb0Fpat5mz1uw";
 
 const mymap = L.map("mapid").setView([45, 0], 5);
-L.tileLayer(
-  `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${mapbox_token}`,
-  {
-    attribution:
-      'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 30,
-    id: "mapbox/streets-v11",
-    tileSize: 512,
-    zoomOffset: -1,
-    accessToken: mapbox_token
+// L.tileLayer(
+//   `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${mapbox_token}`,
+//   {
+//     attribution:
+//       'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+//     maxZoom: 30,
+//     id: "mapbox/streets-v11",
+//     tileSize: 512,
+//     zoomOffset: -1,
+//     accessToken: mapbox_token
+//   }
+// ).addTo(mymap);
+
+let layer = L.esri.basemapLayer("Topographic").addTo(mymap);
+let layerLabels;
+
+function setBasemap(basemap) {
+  if (layer) {
+    mymap.removeLayer(layer);
   }
-).addTo(mymap);
+
+  layer = L.esri.basemapLayer(basemap);
+
+  mymap.addLayer(layer);
+
+  if (layerLabels) {
+    mymap.removeLayer(layerLabels);
+  }
+
+  if (
+    basemap === "ShadedRelief" ||
+    basemap === "Oceans" ||
+    basemap === "Gray" ||
+    basemap === "DarkGray" ||
+    basemap === "Terrain"
+  ) {
+    layerLabels = L.esri.basemapLayer(basemap + "Labels");
+    mymap.addLayer(layerLabels);
+  } else if (basemap.includes("Imagery")) {
+    layerLabels = L.esri.basemapLayer("ImageryLabels");
+    mymap.addLayer(layerLabels);
+  }
+}
 
 /* show GSP coord on clicked point on the map */
 
@@ -118,6 +149,11 @@ const showGPS = e => {
 
 /* Start */
 sessionStorage.clear();
+
+document.querySelector("#basemaps").addEventListener("change", e => {
+  const basemap = e.target.value;
+  setBasemap(basemap);
+});
 
 if ("geolocation" in navigator) {
   // geolocate computer
