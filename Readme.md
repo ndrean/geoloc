@@ -1,6 +1,6 @@
 # geoloc_browser
 
-Javascript ES17 app to play with `navigator.geolocation` API and `Leaflet.js`
+Vannilla Javascript ES17 static front-end app to play with `navigator.geolocation` API and `Leaflet.js`
 
 Three features an the page:
 
@@ -8,6 +8,10 @@ Three features an the page:
 
 - set GPS coordinates and render on a map and find the name of the location (when possible)
 
-- clic on the map and get the GPS coordinates and possible name
+- clic on the map and get by popup the GPS coordinates and possible name
+
+> All the selected places are stored in sessionStorage.
+
+> TODO: draw polygon of a route between points and get gps data over the ocean.
 
 Running on https://geoloc_browser.surge.sh
