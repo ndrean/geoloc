@@ -48,40 +48,102 @@ function setBasemap(basemap) {
   }
 }
 
-/* show GSP coord on clicked point on the map */
-const getGPS = () => {
+const watchGPS = () => {
   document.getElementById("start").addEventListener("click", () => {
     navigator.geolocation.watchPosition(
       position => {
-        // destructure the GPS response
         const {
-          coords: { latitude: lat, longitude: long }
+          coords: { latitude, longitude }
         } = position;
+        console.log(latitude);
+        const time = Number(new Date());
+        data.push([time, latitude, longitude]);
 
-        // display fetch gps coordinates in input fields
-        document.getElementById("geo-lat").value = lat.toPrecision(4);
-        document.getElementById("geo-lng").value = long.toPrecision(4);
+        const tr = document.createElement("tr");
+        let td = document.createElement("td");
+        td.setAttribute("scope", "col");
+        td.style.border = "solid";
+        td.textContent = time;
+        tr.appendChild(td);
+        td = document.createElement("td");
+        td.setAttribute("scope", "col");
+        td.style.border = "solid";
+        td.textContent = latitude;
+        tr.appendChild(td);
+        td = document.createElement("td");
+        td.setAttribute("scope", "col");
+        td.style.border = "solid";
+        td.textContent = longitude;
+        tr.appendChild(td);
+        tb.appendChild(tr);
 
-        // circle around point of 50m
-        L.circle([lat, long], {
-          color: "red",
-          fillColor: "#f03",
-          fillOpacity: 0.2,
-          radius: 50
-        })
-          .addTo(mymap)
-          .bindPopup(reverseGPS({ lat: lat, lng: long }))
-          .openPopup();
-
-        return { lat: lat, lng: long };
+        console.log(data);
+        return data;
       },
       err => {
         console.log(err);
-      },
-      {
-        enableHighAccuracy: true
       }
     );
+  });
+};
+
+const data = [];
+const table = document.getElementById("table");
+
+const t = document.createElement("table");
+t.className = "table";
+
+const tb = document.createElement("tbody");
+t.appendChild(tb);
+table.appendChild(t);
+watchGPS();
+
+export { watchGPS };
+
+/* show GSP coord on clicked point on the map */
+// Promise version
+const getCoordinates = () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        const {
+          coords: { latitude: lat, longitude: long }
+        } = position;
+        resolve({ lat: lat, long: long });
+      },
+      error => {
+        reject(error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+      }
+    );
+  });
+};
+const getGPS = () => {
+  document.getElementById("getGPS").addEventListener("click", async () => {
+    try {
+      const coords = await getCoordinates();
+      const { lat, long } = coords; // destructure
+
+      document.getElementById("geo-lat").value = lat.toPrecision(4);
+      document.getElementById("geo-lng").value = long.toPrecision(4);
+      // mark a circle on the map
+      L.circle([lat, long], {
+        color: "red",
+        fillColor: "#f03",
+        fillOpacity: 0.2,
+        radius: 1000
+      })
+        .addTo(mymap)
+        .bindPopup(reverseGPS({ lat: lat, lng: long }))
+        .openPopup();
+      return { lat: lat, lng: long };
+    } catch (err) {
+      console.log(err);
+    }
   });
 };
 
@@ -107,24 +169,22 @@ const reverseGPS = point => {
 
       // display result in the page HTML
       document.getElementById("coord").textContent = `
-        Latitude : ${result.latlng.lat.toPrecision(3)},
-        Longitude : ${result.latlng.lng.toPrecision(3)}`;
+      Latitude : ${result.latlng.lat.toPrecision(3)},
+      Longitude : ${result.latlng.lng.toPrecision(3)}`;
       document.getElementById("address").textContent = `
-        ${result.address.Match_addr}`;
+      ${result.address.Match_addr}`;
 
       /* save local/sessionStorage. It works with {"key":"values"} in strings,
-      we will create a "key" with the current date-time associated to the place
-      and stringify the 'place' data */
+    we will create a "key" with the current date-time associated to the place
+    and stringify the 'place' data */
       const place = {};
       place.gps = point;
       place.location = result.address.Match_addr;
       place.date = Date.now().toString(); // the "key"
-      try {
-        sessionStorage.setItem(place.date, JSON.stringify(place));
-        console.table(sessionStorage);
-      } catch (err) {
-        console.log("Storage failed :", err);
-      }
+
+      // localStorage is synchronous
+      sessionStorage.setItem(place.date, JSON.stringify(place));
+      console.table(sessionStorage);
 
       return result.address.Match_addr;
     });
@@ -138,7 +198,7 @@ const displayReverseInput = e => {
       lng: document.getElementById("geo-lng").value
     });
   } catch (err) {
-    console.log("can't find this place :", err);
+    console.log(err);
   }
 };
 
@@ -153,22 +213,25 @@ const showGPS = e => {
 /* Start */
 sessionStorage.clear();
 
+// select type of map on demand
 document.querySelector("#basemaps").addEventListener("change", e => {
   const basemap = e.target.value;
   setBasemap(basemap);
 });
 
+// geolocate computer
 if ("geolocation" in navigator) {
-  // geolocate computer
   getGPS();
-
-  // if input is manually changed, display new point
-  mymap.on("click", showGPS);
-
-  // clic on the map and get info displayed the page and map with popup
-  document
-    .getElementById("reverse-locate-me")
-    .addEventListener("click", displayReverseInput);
+} else {
+  throw new Error("Geolocation not supported");
 }
+
+// if input is manually changed, display new point
+mymap.on("click", showGPS);
+
+// clic on the map and get info displayed the page and map with popup
+document
+  .getElementById("reverse-locate-me")
+  .addEventListener("click", displayReverseInput);
 
 /* CMD+SHIFT+P in console => sensor : Geolocation setup*/

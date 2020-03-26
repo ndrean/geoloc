@@ -2,7 +2,9 @@
 
 Vannilla Javascript ES17 static front-end app to play with `navigator.geolocation` API and `Leaflet.js`
 
-Three features an the page:
+Features of this app:
+
+- record your GPS tracks and display it
 
 - get your current GPS coordinates and reverse-geocoding with ESRI and render on a map
 

@@ -1,10 +1,8 @@
 #mapid {
-    height: 50vh;
-    width: 100vw;
+    height: 100vh;
 }
 
 #basemaps-wrapper {
-
     top: 10px;
     right: 10px;
     z-index: 400;
