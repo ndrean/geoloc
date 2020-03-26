@@ -1,4 +1,4 @@
-# geoloc_browser
+# Geolocation with the browser and reverse geolocation with ESRI
 
 Vannilla Javascript ES17 static front-end app to play with `navigator.geolocation` API and `Leaflet.js`
 

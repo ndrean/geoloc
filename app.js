@@ -1,6 +1,6 @@
 // import "https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.js";
-const mapbox_token =
-  "pk.eyJ1IjoibmRyZWFuIiwiYSI6ImNrMnE2d3RlZTBiMjkzZHA3enZ4dXU1cmEifQ.5DQRQQ9H6Gb0Fpat5mz1uw";
+// const mapbox_token =
+//   "pk.eyJ1IjoibmRyZWFuIiwiYSI6ImNrMnE2d3RlZTBiMjkzZHA3enZ4dXU1cmEifQ.5DQRQQ9H6Gb0Fpat5mz1uw";
 
 const mymap = L.map("mapid").setView([45, 0], 5);
 // L.tileLayer(
@@ -16,6 +16,7 @@ const mymap = L.map("mapid").setView([45, 0], 5);
 //   }
 // ).addTo(mymap);
 
+// switch basemap
 let layer = L.esri.basemapLayer("Topographic").addTo(mymap);
 let layerLabels;
 
@@ -48,7 +49,6 @@ function setBasemap(basemap) {
 }
 
 /* show GSP coord on clicked point on the map */
-
 const getGPS = () => {
   document.getElementById("start").addEventListener("click", () => {
     navigator.geolocation.watchPosition(
@@ -85,6 +85,7 @@ const getGPS = () => {
   });
 };
 
+// get the name from coordinates with ESRI
 const reverseGPS = point => {
   L.esri.Geocoding.geocodeService()
     .reverse()
@@ -93,6 +94,7 @@ const reverseGPS = point => {
       if (error) {
         return;
       }
+      // display a geolocated circle on the map
       L.circle(result.latlng, {
         color: "red",
         fillColor: "#f03",
@@ -103,20 +105,20 @@ const reverseGPS = point => {
         .bindPopup(result.address.Match_addr)
         .openPopup();
 
+      // display result in the page HTML
       document.getElementById("coord").textContent = `
         Latitude : ${result.latlng.lat.toPrecision(3)},
         Longitude : ${result.latlng.lng.toPrecision(3)}`;
       document.getElementById("address").textContent = `
         ${result.address.Match_addr}`;
 
+      /* save local/sessionStorage. It works with {"key":"values"} in strings,
+      we will create a "key" with the current date-time associated to the place
+      and stringify the 'place' data */
       const place = {};
       place.gps = point;
       place.location = result.address.Match_addr;
-      /* since local/sessionStorage works with {"key":"values"} in strings,
-      we will create a "key" with the current date-time associated to the place
-      and stringify the 'place' data */
       place.date = Date.now().toString(); // the "key"
-
       try {
         sessionStorage.setItem(place.date, JSON.stringify(place));
         console.table(sessionStorage);
@@ -140,6 +142,7 @@ const displayReverseInput = e => {
   }
 };
 
+// display reverse result in popup
 const showGPS = e => {
   L.popup()
     .setLatLng(e.latlng)
@@ -162,10 +165,10 @@ if ("geolocation" in navigator) {
   // if input is manually changed, display new point
   mymap.on("click", showGPS);
 
-  // clic on the map and get info displayed
+  // clic on the map and get info displayed the page and map with popup
   document
     .getElementById("reverse-locate-me")
     .addEventListener("click", displayReverseInput);
 }
 
-/* CMD+SHIFT+P in console => sensor : Geolocation */
+/* CMD+SHIFT+P in console => sensor : Geolocation setup*/
