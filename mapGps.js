@@ -88,11 +88,9 @@ const watchGPS = () => {
 };
 
 const data = [];
-const table = document.getElementById("table");
-
+const table = document.getElementById("record-table");
 const t = document.createElement("table");
 t.className = "table";
-
 const tb = document.createElement("tbody");
 t.appendChild(tb);
 table.appendChild(t);
@@ -122,6 +120,7 @@ const getCoordinates = () => {
     );
   });
 };
+
 const getGPS = () => {
   document.getElementById("getGPS").addEventListener("click", async () => {
     try {
@@ -177,10 +176,22 @@ const reverseGPS = point => {
       /* save local/sessionStorage. It works with {"key":"values"} in strings,
     we will create a "key" with the current date-time associated to the place
     and stringify the 'place' data */
+
       const place = {};
-      place.gps = point;
+      place.gps = JSON.stringify(point);
       place.location = result.address.Match_addr;
       place.date = Date.now().toString(); // the "key"
+
+      const tr = document.createElement("tr");
+      mtb.appendChild(tr);
+      for (const p of Object.keys(place)) {
+        const td = document.createElement("td");
+        td.setAttribute("scope", "col");
+        console.log(place[p]);
+        td.textContent = place[p];
+        td.style.border = "solid";
+        tr.appendChild(td);
+      }
 
       // localStorage is synchronous
       sessionStorage.setItem(place.date, JSON.stringify(place));
@@ -192,14 +203,10 @@ const reverseGPS = point => {
 
 const displayReverseInput = e => {
   e.preventDefault();
-  try {
-    reverseGPS({
-      lat: document.getElementById("geo-lat").value,
-      lng: document.getElementById("geo-lng").value
-    });
-  } catch (err) {
-    console.log(err);
-  }
+  reverseGPS({
+    lat: document.getElementById("geo-lat").value,
+    lng: document.getElementById("geo-lng").value
+  });
 };
 
 // display reverse result in popup
@@ -209,6 +216,14 @@ const showGPS = e => {
     .setContent(reverseGPS(e.latlng))
     .openOn(mymap);
 };
+
+// display clicked points in a table
+const maptable = document.getElementById("map-table");
+const mt = document.createElement("table");
+maptable.appendChild(mt);
+mt.className = "table";
+const mtb = document.createElement("tbody");
+mt.appendChild(mtb);
 
 /* Start */
 sessionStorage.clear();

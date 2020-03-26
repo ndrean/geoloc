@@ -21,31 +21,43 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <div class="ml-2 font-weight-bold"">
-            <ul>
-              <li>fetch your localisation and map it: 
-                  <button class=" btn btn-primary" id="getGPS" style="width: 150px; margin-left: 20px;">
-          Get GPS
+        <div class="ml-1">
+          <h4>Clic below to start recording yours positions and use console sensor (CMD+SHIFT+P, sensor) to change to
+            simulate</h4>
+          <button class=" btn btn-primary" id="start" style="width: 150px; margin-left: 20px;">
+            Start recording
           </button>
-          </li>
           <br>
-          <li>Clic below to start recording yours positions and use console sensor (CMD+SHIFT+P, sensor) to change to
-            simulate
-            <button class=" btn btn-primary" id="start" style="width: 150px; margin-left: 20px;">
-              Start recording
-            </button>
-          </li>
+          <hr>
+          <h4>Fetch your localisation and map it and display result below</h4>
+          <button class=" btn btn-primary" id="getGPS" style="width: 150px; margin-left: 20px;">
+            Get GPS
+          </button>
+          <form>
+            <div class="row">
+              <div class="col">
+                <label for="geo-lat">Latitude</label>
+                <input id="geo-lat" class="form-control" value="47" />
+              </div>
+              <div class="row">
+                <label for="geo-lng">Longitude</label>
+                <input id="geo-lng" class="form-control" value="0" />
+              </div>
+            </div>
+          </form>
           <br>
-          <li>clic on the map to find coordinates and place name </li>
+          <h4>Display a location by changing the input above </h4>
+          <button id="reverse-locate-me" class="btn btn-success ml-2" style="width: 150px;">
+            Display me!
+          </button>
           <br>
-          <li>display a location by changing the input below </li>
-          <br>
-          </ul>
         </div>
-        <div id="table"></div>
+        <div id="map-table"></div>
+        <div id="record-table">ici</div>
       </div>
 
       <div class="col">
+        <h4>Clic on the map to find coordinates and place name </h4>
         <div id="mapid" class="ml-3 "></div>
         <div id="basemaps-wrapper" class="leaflet-bar">
           <select id="basemaps">
@@ -71,28 +83,6 @@
 
 
 
-
-  <form class="ml-2 mt-2">
-    <!-- <div class="form-group ml-2"> 
-      </div> -->
-    <div class="row">
-      <div class="col">
-        <label for="geo-lat">Latitude</label>
-        <input id="geo-lat" class="form-control" value="47" />
-      </div>
-      <div class="col">
-        <label for="geo-lng">Longitude</label>
-        <input id="geo-lng" class="form-control" value="0" />
-      </div>
-    </div>
-    <!-- <div class="form-group ml-2"> 
-      </div> -->
-    <br />
-    <button id="reverse-locate-me" class="btn btn-success ml-2" style="width: 150px;">
-      Display me!
-    </button>
-    <span class="ml-1">to display the point if you changed the input</span>
-  </form>
 
   <br />
   <div class="ml-3 border p-3">
