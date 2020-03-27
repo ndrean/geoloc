@@ -50,9 +50,8 @@ function setBasemap(basemap) {
 
 const watchGPS = () => {
   document.getElementById("start").addEventListener("click", () => {
-    navigator.geolocation.watchPosition(
+    let id = navigator.geolocation.watchPosition(
       position => {
-        console.log(position.coords);
         const {
           coords: { latitude, longitude }
         } = position;
@@ -86,12 +85,16 @@ const watchGPS = () => {
           )
           .openPopup();
         console.table(data);
+
         return data;
       },
       err => {
         console.log(err);
       }
     );
+    document.getElementById("stop").addEventListener("click", () => {
+      navigator.geolocation.clearWatch(id);
+    });
   });
 };
 
