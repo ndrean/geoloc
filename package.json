@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2"
+  },
+  "name": "geoloc",
+  "description": "Vannilla Javascript ES17 static front-end app to play with `navigator.geolocation` API and `Leaflet.js`",
+  "version": "1.0.0",
+  "main": "mapGps.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ndrean/geoloc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ndrean/geoloc/issues"
+  },
+  "homepage": "https://github.com/ndrean/geoloc#readme"
+}

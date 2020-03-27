@@ -55,29 +55,16 @@ const watchGPS = () => {
         const {
           coords: { latitude, longitude }
         } = position;
-        console.log(latitude);
+
         const time = Number(new Date());
         data.push([time, latitude, longitude]);
 
-        const tr = document.createElement("tr");
-        let td = document.createElement("td");
-        td.setAttribute("scope", "col");
-        td.style.border = "solid";
-        td.textContent = time;
-        tr.appendChild(td);
-        td = document.createElement("td");
-        td.setAttribute("scope", "col");
-        td.style.border = "solid";
-        td.textContent = latitude;
-        tr.appendChild(td);
-        td = document.createElement("td");
-        td.setAttribute("scope", "col");
-        td.style.border = "solid";
-        td.textContent = longitude;
-        tr.appendChild(td);
-        tb.appendChild(tr);
-
-        console.log(data);
+        // add to the table
+        let tr = document.createElement("tr");
+        tr.appendChild(createCell(time));
+        tr.appendChild(createCell(latitude));
+        tr.appendChild(createCell(longitude));
+        recordTable.appendChild(tr);
         return data;
       },
       err => {
@@ -87,20 +74,8 @@ const watchGPS = () => {
   });
 };
 
-const data = [];
-const table = document.getElementById("record-table");
-const t = document.createElement("table");
-t.className = "table";
-const tb = document.createElement("tbody");
-t.appendChild(tb);
-table.appendChild(t);
-watchGPS();
-
-export { watchGPS };
-
-/* show GSP coord on clicked point on the map */
-// Promise version
-const getCoordinates = () => {
+// Promise version that return GPS's sensor results
+const promiseCoordinates = () => {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
       position => {
@@ -121,112 +96,123 @@ const getCoordinates = () => {
   });
 };
 
+// returns GPS sensor results when clicked on button
 const getGPS = () => {
   document.getElementById("getGPS").addEventListener("click", async () => {
     try {
-      const coords = await getCoordinates();
-      const { lat, long } = coords; // destructure
-
+      const { lat, long } = await promiseCoordinates(); // destructure response
+      // fill the HTML input with the result
       document.getElementById("geo-lat").value = lat.toPrecision(4);
       document.getElementById("geo-lng").value = long.toPrecision(4);
-      // mark a circle on the map
-      L.circle([lat, long], {
-        color: "red",
-        fillColor: "#f03",
-        fillOpacity: 0.2,
-        radius: 1000
-      })
-        .addTo(mymap)
-        .bindPopup(reverseGPS({ lat: lat, lng: long }))
-        .openPopup();
-      return { lat: lat, lng: long };
+      // get the address and display popup
+      return reverseGPS({ lat: lat, lng: long });
     } catch (err) {
       console.log(err);
     }
   });
 };
 
-// get the name from coordinates with ESRI
-const reverseGPS = point => {
+/* get the name from coordinates with ESRI and display popup
+Can't return */
+
+function reverseGPS(point) {
   L.esri.Geocoding.geocodeService()
     .reverse()
-    .latlng([point.lat, point.lng])
+    .latlng(point)
     .run(function(error, result) {
       if (error) {
+        alert("erreur GPS");
         return;
       }
+      const country = result.address.CountryCode;
+      const address = result.address.Match_addr;
+
       // display a geolocated circle on the map
-      L.circle(result.latlng, {
+      L.circle(point, {
         color: "red",
         fillColor: "#f03",
         fillOpacity: 0.2,
         radius: 50
       })
         .addTo(mymap)
-        .bindPopup(result.address.Match_addr)
+        .bindPopup(
+          `
+          lat: ${parseInt(point.lat, 10).toPrecision(4)},
+          lng: ${parseInt(point.lng, 10).toPrecision(4)},
+          ${address},
+          ${country}
+        `
+        )
+
         .openPopup();
 
-      // display result in the page HTML
-      document.getElementById("coord").textContent = `
-      Latitude : ${result.latlng.lat.toPrecision(3)},
-      Longitude : ${result.latlng.lng.toPrecision(3)}`;
-      document.getElementById("address").textContent = `
-      ${result.address.Match_addr}`;
+      const place = {
+        lat: parseInt(parseInt(point.lat, 10).toPrecision(4), 10),
+        lng: parseInt(parseInt(point.lng, 10).toPrecision(4), 10),
+        address: address,
+        country: country
+      };
 
-      /* save local/sessionStorage. It works with {"key":"values"} in strings,
-    we will create a "key" with the current date-time associated to the place
-    and stringify the 'place' data */
-
-      const place = {};
-      place.gps = JSON.stringify(point);
-      place.location = result.address.Match_addr;
-      place.date = Date.now().toString(); // the "key"
-
-      const tr = document.createElement("tr");
-      mtb.appendChild(tr);
-      for (const p of Object.keys(place)) {
-        const td = document.createElement("td");
-        td.setAttribute("scope", "col");
-        console.log(place[p]);
-        td.textContent = place[p];
-        td.style.border = "solid";
-        tr.appendChild(td);
-      }
-
-      // localStorage is synchronous
-      sessionStorage.setItem(place.date, JSON.stringify(place));
+      fillNewRowInTable({
+        table: mapTable,
+        keys: ["country", "lat", "lng", "address"],
+        place: place
+      });
+      // Note: localStorage is synchronous
+      sessionStorage.setItem(Date.now(), JSON.stringify(place));
       console.table(sessionStorage);
-
-      return result.address.Match_addr;
+      return place;
     });
-};
+}
 
-const displayReverseInput = e => {
-  e.preventDefault();
+// display point when coordinates are given from HTML input
+const displayReverseInput = () => {
   reverseGPS({
     lat: document.getElementById("geo-lat").value,
     lng: document.getElementById("geo-lng").value
   });
 };
 
-// display reverse result in popup
-const showGPS = e => {
-  L.popup()
-    .setLatLng(e.latlng)
-    .setContent(reverseGPS(e.latlng))
-    .openOn(mymap);
+// callback attached to the map and clicked point from the map
+const showPoint = e => {
+  // e captures the clicked location of the map
+  reverseGPS({ lat: e.latlng.lat, lng: e.latlng.lng });
 };
 
-// display clicked points in a table
-const maptable = document.getElementById("map-table");
-const mt = document.createElement("table");
-maptable.appendChild(mt);
-mt.className = "table";
-const mtb = document.createElement("tbody");
-mt.appendChild(mtb);
+const createCell = cell => {
+  const td = document.createElement("td");
+  td.setAttribute("scope", "col");
+  td.textContent = cell;
+  td.style.border = "solid";
+  return td;
+};
+
+const fillNewRowInTable = ({ keys: keys, place: place, table: table }) => {
+  const newRow = document.createElement("tr");
+  table.appendChild(newRow);
+  for (const key of keys) {
+    newRow.appendChild(createCell(place[key]));
+  }
+};
+
+const createTable = id => {
+  const table = document.createElement("table");
+  document.getElementById(id).appendChild(table);
+  table.className = "table";
+  const tableBody = document.createElement("tbody");
+  table.appendChild(tableBody);
+  return tableBody;
+};
 
 /* Start */
+
+const data = [];
+const recordTable = createTable("record-table");
+watchGPS();
+export { watchGPS };
+
 sessionStorage.clear();
+const mapTable = createTable("map-table");
 
 // select type of map on demand
 document.querySelector("#basemaps").addEventListener("change", e => {
@@ -242,7 +228,7 @@ if ("geolocation" in navigator) {
 }
 
 // if input is manually changed, display new point
-mymap.on("click", showGPS);
+mymap.on("click", showPoint);
 
 // clic on the map and get info displayed the page and map with popup
 document

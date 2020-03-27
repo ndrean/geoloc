@@ -22,8 +22,8 @@
     <div class="row">
       <div class="col">
         <div class="ml-1">
-          <h4>Clic below to start recording yours positions and use console sensor (CMD+SHIFT+P, sensor) to change to
-            simulate</h4>
+          <h4>Start recording yours positions (by using console sensor (CMD+SHIFT+P, sensor) to
+            simulate new GPS data)</h4>
           <button class=" btn btn-primary" id="start" style="width: 150px; margin-left: 20px;">
             Start recording
           </button>
@@ -51,13 +51,16 @@
             Display me!
           </button>
           <br>
+          <hr>
+          <div id="map-table"></div>
         </div>
-        <div id="map-table"></div>
-        <div id="record-table">ici</div>
+
+        <div id="record-table"></div>
       </div>
 
       <div class="col">
         <h4>Clic on the map to find coordinates and place name </h4>
+
         <div id="mapid" class="ml-3 "></div>
         <div id="basemaps-wrapper" class="leaflet-bar">
           <select id="basemaps">
@@ -74,24 +77,11 @@
             <option value="Physical">Physical</option>
           </select>
         </div>
+
       </div>
 
     </div>
   </div>
-
-
-
-
-
-
-  <br />
-  <div class="ml-3 border p-3">
-    <p id="coord">Results will be displayed here...</p>
-    <address id="address"></address>
-  </div>
-  <br />
-  <p class="ml-3">Click on the map to get a location</p>
-
 
 
   <!-- bootstrap -->
