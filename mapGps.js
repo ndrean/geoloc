@@ -50,7 +50,7 @@ function setBasemap(basemap) {
 
 const watchGPS = () => {
   document.getElementById("start").addEventListener("click", () => {
-    let id = navigator.geolocation.watchPosition(
+    const id = navigator.geolocation.watchPosition(
       position => {
         const {
           coords: { latitude, longitude }
@@ -230,8 +230,26 @@ const createTable = id => {
 
 /* Start */
 
+// Create table/Header for data recording
 const data = [];
-const recordTable = createTable("record-table");
+const table = document.createElement("table");
+document.getElementById("record-table").appendChild(table);
+table.className = "table"; // Bootstrap
+const tableHead = document.createElement("thead");
+table.appendChild(tableHead);
+fillNewRowInTable({
+  table: tableHead,
+  keys: ["time", "lat", "lng"],
+  place: {
+    lat: "Latitude",
+    lng: "Longitude",
+    time: "Date"
+  }
+});
+const tableBody = document.createElement("tbody");
+table.appendChild(tableBody);
+
+// recording function
 watchGPS();
 export { watchGPS };
 
