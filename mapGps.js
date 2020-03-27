@@ -52,19 +52,40 @@ const watchGPS = () => {
   document.getElementById("start").addEventListener("click", () => {
     navigator.geolocation.watchPosition(
       position => {
+        console.log(position.coords);
         const {
           coords: { latitude, longitude }
         } = position;
 
-        const time = Number(new Date());
+        const time = Date(new Date());
         data.push([time, latitude, longitude]);
 
-        // add to the table
-        let tr = document.createElement("tr");
-        tr.appendChild(createCell(time));
-        tr.appendChild(createCell(latitude));
-        tr.appendChild(createCell(longitude));
-        recordTable.appendChild(tr);
+        document.querySelector("#record-table tbody").insertAdjacentHTML(
+          "afterbegin",
+          `
+            <tr>
+              <td>${time}</td>
+              <td>${parseInt(latitude, 10).toPrecision(4)}</td>
+              <td>${parseInt(longitude, 10).toPrecision(4)}</td>
+            </tr>
+          `
+        );
+        // display on the map
+        L.circle([latitude, longitude], {
+          color: "red",
+          fillColor: "#f03",
+          fillOpacity: 0.2,
+          radius: 50
+        })
+          .addTo(mymap)
+          .bindPopup(
+            `
+          lat: ${parseInt(latitude, 10).toPrecision(4)},
+          lng: ${parseInt(longitude, 10).toPrecision(4)},
+        `
+          )
+          .openPopup();
+        console.table(data);
         return data;
       },
       err => {
