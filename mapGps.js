@@ -64,8 +64,8 @@ const watchGPS = () => {
           `
             <tr>
               <td>${time}</td>
-              <td>${parseInt(latitude, 10).toPrecision(4)}</td>
-              <td>${parseInt(longitude, 10).toPrecision(4)}</td>
+              <td>${latitude.toPrecision(4)}</td>
+              <td>${longitude.toPrecision(4)}</td>
             </tr>
           `
         );
@@ -79,8 +79,8 @@ const watchGPS = () => {
           .addTo(mymap)
           .bindPopup(
             `
-          lat: ${parseInt(latitude, 10).toPrecision(4)},
-          lng: ${parseInt(longitude, 10).toPrecision(4)},
+          lat: ${latitude.toPrecision(4)},
+          lng: ${longitude.toPrecision(4)},
         `
           )
           .openPopup();
@@ -106,7 +106,7 @@ const promiseCoordinates = () => {
         const {
           coords: { latitude: lat, longitude: long }
         } = position;
-        resolve({ lat: lat, long: long });
+        resolve({ lat: lat, long: long }); // this returns
       },
       error => {
         reject(error);
@@ -121,7 +121,7 @@ const promiseCoordinates = () => {
 };
 
 // returns GPS sensor results when clicked on button
-const getGPS = () => {
+const getGPS = async () => {
   document.getElementById("getGPS").addEventListener("click", async () => {
     try {
       const { lat, long } = await promiseCoordinates(); // destructure response
@@ -161,18 +161,18 @@ function reverseGPS(point) {
         .addTo(mymap)
         .bindPopup(
           `
-          lat: ${parseInt(point.lat, 10).toPrecision(4)},
-          lng: ${parseInt(point.lng, 10).toPrecision(4)},
-          ${address},
-          ${country}
-        `
+        lat: ${point.lat},
+        lng: ${point.lng},
+        ${address},
+        ${country}
+      `
         )
 
         .openPopup();
 
       const place = {
-        lat: parseInt(parseInt(point.lat, 10).toPrecision(4), 10),
-        lng: parseInt(parseInt(point.lng, 10).toPrecision(4), 10),
+        lat: Number(point.lat).toPrecision(4),
+        lng: Number(point.lng).toPrecision(4),
         address: address,
         country: country
       };
@@ -192,8 +192,8 @@ function reverseGPS(point) {
 // display point when coordinates are given from HTML input
 const displayReverseInput = () => {
   reverseGPS({
-    lat: document.getElementById("geo-lat").value,
-    lng: document.getElementById("geo-lng").value
+    lat: Number(document.getElementById("geo-lat").value).toPrecision(4),
+    lng: Number(document.getElementById("geo-lng").value).toPrecision(4)
   });
 };
 
@@ -235,6 +235,7 @@ const data = [];
 const table = document.createElement("table");
 document.getElementById("record-table").appendChild(table);
 table.className = "table"; // Bootstrap
+table.classList.add = "toto";
 const tableHead = document.createElement("thead");
 table.appendChild(tableHead);
 fillNewRowInTable({
