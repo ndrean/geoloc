@@ -179,8 +179,8 @@ function reverseGPS(point) {
         .addTo(mymap)
         .bindPopup(
           ` 
-        <p> lat: ${point.lat.toPrecision(4)},
-           lng: ${point.lng.toPrecision(4)}
+        <p> lat: ${Number(point.lat).toPrecision(4)},
+           lng: ${Number(point.lng).toPrecision(4)}
         </p>
         <p> ${address}, ${country} </p>
         `
