@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-react-app": "^3.1.2"
+    "babel-preset-react-app": "^3.1.2",
+    "node-fetch": "^2.6.0"
   },
   "name": "geoloc",
   "description": "Vannilla Javascript ES17 static front-end app to play with `navigator.geolocation` API and `Leaflet.js`",

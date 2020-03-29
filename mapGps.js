@@ -98,10 +98,11 @@ const watchGPS = () => {
   });
 };
 
-// Promise version that return GPS's sensor results
+/* Promise that return GPS's sensor results  */
 const promiseCoordinates = () => {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(
+      //resolve, reject,options
       position => {
         const {
           coords: { latitude: lat, longitude: long }
@@ -120,11 +121,27 @@ const promiseCoordinates = () => {
   });
 };
 
-// returns GPS sensor results when clicked on button
+/* returns GPS sensor results when clicked on button
+2 versions : (promise.then.catch) and (await and try-catch)*/
+
 const getGPS = async () => {
   document.getElementById("getGPS").addEventListener("click", async () => {
+    /*   version promise().then(..).catch()
+    // promiseCoordinates()
+    //   .then(response => {
+    //     const { lat, long } = response;
+    //     document.getElementById("geo-lat").value = lat.toPrecision(4);
+    //     document.getElementById("geo-lng").value = long.toPrecision(4);
+    //     return reverseGPS({ lat: lat, lng: long });
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //   });
+    */
+
+    /* version try catch */
     try {
-      const { lat, long } = await promiseCoordinates(); // destructure response
+      const { lat, long } = await promiseCoordinates(); // resolve & estructure response
       // fill the HTML input with the result
       document.getElementById("geo-lat").value = lat.toPrecision(4);
       document.getElementById("geo-lng").value = long.toPrecision(4);
@@ -132,6 +149,7 @@ const getGPS = async () => {
       return reverseGPS({ lat: lat, lng: long });
     } catch (err) {
       console.log(err);
+      window.alert(err);
     }
   });
 };
@@ -160,14 +178,13 @@ function reverseGPS(point) {
       })
         .addTo(mymap)
         .bindPopup(
-          `
-        lat: ${point.lat},
-        lng: ${point.lng},
-        ${address},
-        ${country}
-      `
+          ` 
+        <p> lat: ${point.lat.toPrecision(4)},
+           lng: ${point.lng.toPrecision(4)}
+        </p>
+        <p> ${address}, ${country} </p>
+        `
         )
-
         .openPopup();
 
       const place = {
