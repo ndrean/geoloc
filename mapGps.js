@@ -63,9 +63,13 @@ const watchGPS = () => {
           "afterbegin",
           `
             <tr>
-              <td>${time}</td>
-              <td>${latitude.toPrecision(4)}</td>
-              <td>${longitude.toPrecision(4)}</td>
+              <td scope="col" style="border: solid;color:white;">${time}</td>
+              <td scope="col" style="border: solid; color:white;">${latitude.toPrecision(
+                4
+              )}</td>
+              <td scope="col" style="border: solid; color:white;">${longitude.toPrecision(
+                4
+              )}</td>
             </tr>
           `
         );
@@ -225,6 +229,7 @@ const createCell = cell => {
   td.setAttribute("scope", "col");
   td.textContent = cell;
   td.style.border = "solid";
+  td.style.color = "white";
   return td;
 };
 
@@ -267,18 +272,18 @@ fillNewRowInTable({
 const tableBody = document.createElement("tbody");
 table.appendChild(tableBody);
 
-// recording function
-watchGPS();
-export { watchGPS };
-
-sessionStorage.clear();
-const mapTable = createTable("map-table");
-
 // select type of map on demand
 document.querySelector("#basemaps").addEventListener("change", e => {
   const basemap = e.target.value;
   setBasemap(basemap);
 });
+
+// recording function
+watchGPS();
+
+sessionStorage.clear();
+const mapTable = createTable("map-table");
+mapTable.className = "table";
 
 // geolocate computer
 if ("geolocation" in navigator) {

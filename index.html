@@ -2,6 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta
+      name="Simple GeoTracker"
+      content="Get your GSP position and display on a map, record your position changes, and locate a position on a map and find it's address"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GeoTracker</title>
     <link
@@ -27,6 +31,7 @@
   </head>
 
   <body>
+    <noscript> This page requires you to have the Javascript enabled.</noscript>
     <div class="container">
       <div class="row">
         <div class="col">
@@ -165,17 +170,6 @@
       crossorigin=""
     ></script>
 
-    <!-- React.js et React DOM -->
-    <script
-      crossorigin
-      src="https://unpkg.com/react@16/umd/react.development.js"
-    ></script>
-    <script
-      crossorigin
-      src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"
-    ></script>
-
-    <script type="module" src="table.js"></script>
     <script type="module" src="mapGps.js"></script>
   </body>
 </html>
