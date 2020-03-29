@@ -2,7 +2,7 @@
 // const mapbox_token =
 //   "pk.eyJ1IjoibmRyZWFuIiwiYSI6ImNrMnE2d3RlZTBiMjkzZHA3enZ4dXU1cmEifQ.5DQRQQ9H6Gb0Fpat5mz1uw";
 
-const mymap = L.map("mapid").setView([45, 0], 5);
+const mymap = L.map("mapid").setView([45, 0], 5) || "WesternEurope.jpg";
 // L.tileLayer(
 //   `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${mapbox_token}`,
 //   {
@@ -251,6 +251,15 @@ const createTable = id => {
 };
 
 /* Start */
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function() {
+    navigator.serviceWorker
+      .register("/serviceWorker.js")
+      .then(res => console.log("service worker registered"))
+      .catch(err => console.log("service worker not registered", err));
+  });
+}
 
 // Create table/Header for data recording
 const data = [];
