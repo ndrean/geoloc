@@ -1,10 +1,10 @@
-# Geolocation with the browser and reverse geolocation with ESRI
+# Geolocation app (PWA-browser), reverse geolocation with ESRI
 
 Vannilla Javascript ES17 static front-end PWA app to play with `navigator.geolocation` API and `Leaflet.js`
 
 Features of this app:
 
-- PWA
+- PWA (on iphone, only with Safari)
 
 - record your GPS tracks and display it
 
