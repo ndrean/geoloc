@@ -2,7 +2,7 @@
 // const mapbox_token =
 //   "pk.eyJ1IjoibmRyZWFuIiwiYSI6ImNrMnE2d3RlZTBiMjkzZHA3enZ4dXU1cmEifQ.5DQRQQ9H6Gb0Fpat5mz1uw";
 
-const mymap = L.map("mapid").setView([45, 0], 5) || "WesternEurope.jpg";
+const mymap = L.map("mapid").setView([45, 0], 5) || "/WesternEurope.jpg";
 // L.tileLayer(
 //   `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${mapbox_token}`,
 //   {
@@ -153,7 +153,7 @@ const getGPS = async () => {
       return reverseGPS({ lat: lat, lng: long });
     } catch (err) {
       console.log(err);
-      window.alert(err);
+      window.alert(err.message);
     }
   });
 };
@@ -167,7 +167,7 @@ function reverseGPS(point) {
     .latlng(point)
     .run(function(error, result) {
       if (error) {
-        alert("erreur GPS");
+        alert("Network error");
         return;
       }
       const country = result.address.CountryCode;
